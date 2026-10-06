@@ -8,17 +8,36 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        
+        html {
+            overflow-y: scroll; /* Pinapanatili ang stable width ng screen para hindi gumagalaw ang layout */
+        }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
         }
         .card-glow {
             box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1), 0 0 20px rgba(79, 70, 229, 0.05);
+        }
+        /* Modern Scrollbar styling para mas presentable */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 flex items-center justify-center min-h-screen p-4 text-slate-800">
 
-    <div class="bg-white/95 backdrop-blur-xl w-full max-w-md rounded-3xl card-glow overflow-hidden p-6 sm:p-8 text-center border border-white/20 transition-all duration-300">
+    <div class="bg-white/95 backdrop-blur-xl w-full max-w-md rounded-3xl card-glow overflow-hidden p-6 sm:p-8 text-center border border-white/20 transition-all duration-300 my-auto">
         
         <!-- Loading state na may modern spinner -->
         <div id="loading" class="py-16">
@@ -51,7 +70,7 @@
             <!-- Action Buttons na may Modern Hover Effects -->
             <div class="space-y-3">
                 <!-- Button para i-save ang contact number sa phone -->
-                <button onclick="saveContact()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-200 transition duration-200 flex items-center justify-center gap-2.5 text-sm">
+                <button onclick="saveContact()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-200 transition duration-200 flex items-center justify-center gap-2.5 text-sm cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                     I-save sa Contacts
                 </button>
@@ -160,7 +179,6 @@
             const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
             const file = new File([blob], `${contactData.FullName.replace(/\s+/g, '_')}.vcf`, { type: 'text/vcard' });
 
-            // Subukang gamitin ang Web Share API para direktang lumabas ang contact option sa mobile
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({
@@ -173,12 +191,11 @@
                     if (error.name !== 'AbortError') {
                         console.log('Share fallback to download', error);
                     } else {
-                        return; // Kung kinansela ng user ang share sheet
+                        return;
                     }
                 }
             }
 
-            // Fallback kung sakaling hindi suportado ng browser: awtomatikong mag-download
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
