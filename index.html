@@ -28,9 +28,17 @@
 
             <!-- Buttons -->
             <div class="space-y-3">
+                <!-- Button para i-save ang contact number sa phone -->
                 <button onclick="saveContact()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2">
                     📱 I-save sa Contacts
                 </button>
+
+                <!-- Button para i-download ang mismong Business Card image -->
+                <a id="downloadCardBtn" href="#" download class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2">
+                    📥 I-download ang Business Card
+                </a>
+
+                <!-- Button para sa Tawag -->
                 <a id="callBtn" href="#" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2">
                     📞 Tawagan / Call
                 </a>
@@ -44,10 +52,10 @@
     </div>
 
     <script>
-        // Palitan ito ng Google Apps Script Web App URL mo mula sa unang hakbang
         const API_URL = "https://script.google.com/macros/s/AKfycbyub_u9y9a4HUM5eTa4lYq-SQ8XeWNk1nC0A4AG-UXIEmJeymTimFJ76qwIgCjzYYQ6EA/exec";
 
         let contactData = {};
+        let cardImageUrl = "";
 
         async function fetchCardData() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -74,17 +82,21 @@
                 document.getElementById('jobTitle').innerText = data.JobTitle;
                 document.getElementById('company').innerText = data.Company;
                 
-                // Kung may PhotoURL column sa Sheet, unahin yun, kung wala, gagamit ng default
+                // Set Image URL
+                cardImageUrl = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
                 const imgElement = document.getElementById('profileImg');
-                imgElement.src = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
+                imgElement.src = cardImageUrl;
+
+                // I-set ang download link para sa business card image button
+                const downloadCardBtn = document.getElementById('downloadCardBtn');
+                downloadCardBtn.href = cardImageUrl;
+                downloadCardBtn.setAttribute('download', `${data.FullName.replace(/\s+/g, '_')}_BusinessCard.jpg`);
 
                 document.getElementById('callBtn').href = `tel:${data.Phone}`;
 
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('cardContent').classList.remove('hidden');
 
-                // Auto-trigger ang vCard download o prompt pagka-open para sa convenience ng client
-                // (O kaya i-click nila yung button para mas safe sa ilang mobile browsers)
             } catch (error) {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('errorState').classList.remove('hidden');
@@ -92,26 +104,33 @@
         }
 
         function saveContact() {
-            // Gumawa ng vCard (.vcf) format data string
-            const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${contactData.FullName}
-TITLE:${contactData.JobTitle}
-ORG:${contactData.Company}
-TEL;TYPE=CELL:${contactData.Phone}
-EMAIL:${contactData.Email}
-URL:${contactData.Website || ''}
-END:VCARD`;
+            // Gumawa ng vCard (.vcf) format para direktang ma-save sa phone contacts
+            const vcard = [
+                "BEGIN:VCARD",
+                "VERSION:3.0",
+                `FN:${contactData.FullName}`,
+                `N:${contactData.FullName};;;;`,
+                `TITLE:${contactData.JobTitle}`,
+                `ORG:${contactData.Company}`,
+                `TEL;TYPE=WORK,VOICE:${contactData.Phone}`,
+                `EMAIL;TYPE=PREF,INTERNET:${contactData.Email}`,
+                contactData.Website ? `URL:${contactData.Website}` : "",
+                "END:VCARD"
+            ].filter(Boolean).join("\r\n");
 
             const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
             const url = window.URL.createObjectURL(blob);
+            
             const a = document.createElement('a');
             a.href = url;
             a.download = `${contactData.FullName.replace(/\s+/g, '_')}.vcf`;
             document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 100);
         }
 
         fetchCardData();
