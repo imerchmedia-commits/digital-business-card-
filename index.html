@@ -37,14 +37,16 @@
                         inset 0 -1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        /* 3D Flip Card Container Styles - Naayos para magkapatong nang eksakto */
+        /* 3D Flip Card Container Styles - Ganap na magkakapatong */
         .perspective-container {
             perspective: 1000px;
             width: 100%;
+            position: relative;
         }
         .card-flip-inner {
             position: relative;
             width: 100%;
+            height: 100%;
             transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
         }
@@ -53,8 +55,7 @@
         }
         .card-face {
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
@@ -63,10 +64,12 @@
             transform-style: preserve-3d;
         }
         .card-front {
-            position: relative; /* Hinahayaan nitong sundin ang natural height ng image para sa container */
+            position: relative; /* Nagbibigay ng saktong sukat sa container base sa image aspect ratio */
+            z-index: 2;
         }
         .card-back {
             transform: rotateY(180deg);
+            z-index: 1;
         }
 
         /* 3D Embossed Button & Elements */
@@ -113,6 +116,10 @@
                         inset 0 2px 4px rgba(255, 255, 255, 0.9),
                         inset 0 -2px 4px rgba(0, 0, 0, 0.05);
             border: 2px solid rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         /* Custom Scrollbar */
@@ -149,12 +156,12 @@
                     
                     <!-- FRONT SIDE -->
                     <div class="card-face card-front image-frame-3d rounded-2xl p-2">
-                        <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-cover rounded-xl shadow-inner block" onload="adjustCardHeight()">
+                        <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-contain rounded-xl shadow-inner block" onload="adjustCardHeight()">
                     </div>
 
                     <!-- BACK SIDE -->
                     <div class="card-face card-back image-frame-3d rounded-2xl p-2">
-                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-cover rounded-xl shadow-inner block">
+                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-contain rounded-xl shadow-inner block">
                     </div>
 
                 </div>
@@ -269,7 +276,7 @@
             }
         }
 
-        // Pantay na sukat ng front at back container para maganda ang 3D flip effect nang walang pagbaba ng pwesto
+        // Pantay na sukat ng front at back container para maganda ang 3D flip effect nang walang paggalaw ng pwesto
         function adjustCardHeight() {
             const frontImg = document.getElementById('profileImg');
             if (frontImg && frontImg.height > 0) {
