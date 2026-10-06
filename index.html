@@ -158,9 +158,9 @@
                         <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-fill rounded-xl shadow-inner block" onload="adjustCardHeight()">
                     </div>
 
-                    <!-- BACK SIDE -->
-                    <div class="card-face card-back image-frame-3d rounded-2xl p-2">
-                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-full object-fill rounded-xl shadow-inner block">
+                    <!-- BACK SIDE (May kasamang Fallback Error Handler) -->
+                    <div id="backFaceContainer" class="card-face card-back image-frame-3d rounded-2xl p-2">
+                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-full object-fill rounded-xl shadow-inner block" onerror="handleBackImageError()">
                     </div>
 
                 </div>
@@ -220,6 +220,19 @@
             innerCard.classList.toggle('card-flipped');
         }
 
+        // Fallback function kung sakaling mag-fail i-load ang back image mula sa GitHub
+        function handleBackImageError() {
+            const backContainer = document.getElementById('backFaceContainer');
+            backContainer.style.background = 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
+            backContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-white p-6 text-center">
+                    <span class="text-[10px] tracking-widest text-indigo-300 uppercase font-bold mb-1">iMerch Media Inc.</span>
+                    <h3 class="text-base font-bold text-white mb-2">Official Business Card</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">I-save ang contact o i-tap ulit para bumalik sa front view.</p>
+                </div>
+            `;
+        }
+
         async function fetchCardData() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
@@ -249,7 +262,7 @@
                 cardImageUrl = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
                 document.getElementById('profileImg').src = cardImageUrl;
 
-                // Back Image URL (Eksaktong Raw GitHub Link)
+                // Back Image URL (Gagamitin ang galing sa database kung meron, o kaya ay default GitHub link)
                 const defaultBackImage = "https://raw.githubusercontent.com/imerchmedia-commits/digital-business-card-/main/back%20CC.jpg";
                 const backImageUrl = data.BackPhotoURL && data.BackPhotoURL.trim() !== "" ? data.BackPhotoURL : defaultBackImage;
                 document.getElementById('backProfileImg').src = backImageUrl;
