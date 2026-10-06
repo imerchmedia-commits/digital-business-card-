@@ -10,101 +10,162 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
         html {
-            overflow-y: scroll; /* Pinapanatili ang stable width ng screen para hindi gumagalaw ang layout */
+            overflow-y: scroll;
         }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
+            /* Dynamic Animated Premium Gradient Background */
+            background: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
+            background-size: 200% 200%;
+            animation: bgShift 12s ease infinite;
         }
-        .card-glow {
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1), 0 0 20px rgba(79, 70, 229, 0.05);
+
+        @keyframes bgShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        /* Modern Scrollbar styling para mas presentable */
-        ::-webkit-scrollbar {
-            width: 8px;
+
+        /* High-End Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                        inset 0 -1px 2px rgba(0, 0, 0, 0.05);
         }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
+
+        /* 3D Embossed Button & Elements */
+        .btn-3d {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            box-shadow: 6px 6px 16px rgba(163, 177, 198, 0.4), 
+                        -6px -6px 16px rgba(255, 255, 255, 0.9),
+                        inset 0 1px 0 rgba(255, 255, 255, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
+
+        .btn-3d:hover {
+            transform: translateY(-2px);
+            box-shadow: 8px 8px 20px rgba(163, 177, 198, 0.5), 
+                        -8px -8px 20px rgba(255, 255, 255, 1),
+                        inset 0 1px 0 rgba(255, 255, 255, 1);
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+
+        .btn-3d:active {
+            transform: translateY(1px);
+            box-shadow: inset 3px 3px 6px rgba(163, 177, 198, 0.3), 
+                        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
         }
+
+        /* Primary 3D Embossed Button (Indigo Theme) */
+        .btn-3d-primary {
+            background: linear-gradient(145deg, #6366f1, #4f46e5);
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.5),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.4),
+                        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-3d-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px -5px rgba(79, 70, 229, 0.6),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-3d-primary:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 3D Embossed Image Frame */
+        .image-frame-3d {
+            background: #ffffff;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08),
+                        inset 0 2px 4px rgba(255, 255, 255, 0.9),
+                        inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 flex items-center justify-center min-h-screen p-4 text-slate-800">
+<body class="flex items-center justify-center min-h-screen p-4 text-slate-800">
 
-    <div class="bg-white/95 backdrop-blur-xl w-full max-w-md rounded-3xl card-glow overflow-hidden p-6 sm:p-8 text-center border border-white/20 transition-all duration-300 my-auto">
+    <div class="glass-card w-full max-w-md rounded-3xl overflow-hidden p-6 sm:p-8 text-center my-auto transition-all duration-300">
         
         <!-- Loading state na may modern spinner -->
         <div id="loading" class="py-16">
             <div class="inline-block w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-slate-500 font-medium animate-pulse">Inihahanda ang Digital Card...</p>
+            <p class="text-slate-600 font-medium animate-pulse">Inihahanda ang Digital Card...</p>
         </div>
 
         <!-- Card Content (Naka-hide muna habang kinukuha ang data) -->
         <div id="cardContent" class="hidden">
             
             <!-- Verified Badge / Header Accent -->
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-semibold mb-4 tracking-wider uppercase">
+            <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/80 border border-white text-indigo-600 text-xs font-bold mb-4 tracking-wider uppercase shadow-sm">
                 <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
                 Official Digital Business Card
             </div>
 
-            <!-- Larawan / Business Card Image na may Modern Frame -->
-            <div class="mb-6 group relative">
-                <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-rose-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-                <div class="relative bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
-                    <img id="profileImg" src="" alt="Business Card" class="w-full h-auto object-cover transform transition duration-500 hover:scale-[1.02]">
+            <!-- Larawan / Business Card Image na may 3D Frame -->
+            <div class="mb-6 relative group">
+                <div class="image-frame-3d rounded-2xl p-2 transition duration-500 group-hover:scale-[1.01]">
+                    <img id="profileImg" src="" alt="Business Card" class="w-full h-auto object-cover rounded-xl shadow-inner">
                 </div>
             </div>
 
-            <!-- Profile Info -->
-            <h1 id="fullName" class="text-2xl font-bold text-slate-900 tracking-tight"></h1>
-            <p id="jobTitle" class="text-indigo-600 font-semibold text-sm mt-1 uppercase tracking-wider"></p>
-            <p id="company" class="text-slate-400 text-xs font-medium mb-8 pb-4 border-b border-slate-100"></p>
+            <!-- Profile Info na may linis sa mata -->
+            <h1 id="fullName" class="text-2xl font-bold text-slate-900 tracking-tight drop-shadow-sm"></h1>
+            <p id="jobTitle" class="text-indigo-600 font-bold text-sm mt-1 uppercase tracking-wider"></p>
+            <p id="company" class="text-slate-500 text-xs font-semibold mb-6 pb-4 border-b border-slate-200/60"></p>
 
-            <!-- Action Buttons na may Modern Hover Effects -->
-            <div class="space-y-3">
+            <!-- 3D Embossed Action Buttons -->
+            <div class="space-y-3.5">
                 <!-- Button para i-save ang contact number sa phone -->
-                <button onclick="saveContact()" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-200 transition duration-200 flex items-center justify-center gap-2.5 text-sm cursor-pointer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                <button onclick="saveContact()" class="w-full btn-3d-primary font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2.5 text-sm cursor-pointer">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                     I-save sa Contacts
                 </button>
 
                 <!-- Button para i-download ang mismong Business Card image -->
-                <a id="downloadCardBtn" href="#" download class="w-full bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition duration-200 flex items-center justify-center gap-2.5 text-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <a id="downloadCardBtn" href="#" download class="w-full btn-3d text-slate-800 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2.5 text-sm">
+                    <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     I-download ang Card Image
                 </a>
 
                 <!-- Button para sa Tawag -->
-                <a id="callBtn" href="#" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 active:scale-[0.98] font-semibold py-3 px-4 rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm border border-emerald-200/60">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                <a id="callBtn" href="#" class="w-full btn-3d text-emerald-800 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                     Tawagan / Call
                 </a>
 
                 <!-- Button para sa Email -->
-                <a id="emailBtn" href="#" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 active:scale-[0.98] font-semibold py-3 px-4 rounded-xl transition duration-200 flex items-center justify-center gap-2 text-sm border border-sky-200/60">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <a id="emailBtn" href="#" class="w-full btn-3d text-sky-800 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     Mag-email / Send Email
                 </a>
             </div>
 
             <!-- Footer Branding -->
-            <div class="mt-8 text-[11px] text-slate-400 font-medium tracking-wide">
+            <div class="mt-8 text-[11px] text-slate-500 font-semibold tracking-wide">
                 Powered by iMerch Media Inc. Digital System
             </div>
         </div>
 
         <!-- Error State -->
         <div id="errorState" class="hidden py-12">
-            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-3 text-xl font-bold">!</div>
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3 text-xl font-bold shadow-inner">!</div>
             <p class="text-rose-600 font-semibold text-sm">Hindi nahanap ang business card o may mali sa link.</p>
-            <p class="text-slate-400 text-xs mt-1">Mangyaring suriin ang QR code o ang link na ginamit.</p>
+            <p class="text-slate-500 text-xs mt-1">Mangyaring suriin ang QR code o ang link na ginamit.</p>
         </div>
     </div>
 
