@@ -135,7 +135,7 @@
             }
         }
 
-        function saveContact() {
+        async function saveContact() {
             const vcard = [
                 "BEGIN:VCARD",
                 "VERSION:3.0",
@@ -149,9 +149,29 @@
                 "END:VCARD"
             ].filter(Boolean).join("\r\n");
 
-            const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' + '' });
+            const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+            const file = new File([blob], `${contactData.FullName.replace(/\s+/g, '_')}.vcf`, { type: 'text/vcard' });
+
+            // Subukang gamitin ang Web Share API para direktang lumabas ang contact option sa mobile
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: `Contact: ${contactData.FullName}`,
+                        text: `I-save ang contact details ni ${contactData.FullName} (${contactData.JobTitle} ng ${contactData.Company})`,
+                        files: [file],
+                    });
+                    return;
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.log('Share fallback to download', error);
+                    } else {
+                        return; // Kung kinansela ng user ang share sheet
+                    }
+                }
+            }
+
+            // Fallback kung sakaling hindi suportado ng browser: awtomatikong mag-download
             const url = window.URL.createObjectURL(blob);
-            
             const a = document.createElement('a');
             a.href = url;
             a.download = `${contactData.FullName.replace(/\s+/g, '_')}.vcf`;
