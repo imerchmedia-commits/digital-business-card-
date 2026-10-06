@@ -37,7 +37,7 @@
                         inset 0 -1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        /* 3D Flip Card Container Styles - Ganap na magkakapatong */
+        /* 3D Flip Card Container Styles */
         .perspective-container {
             perspective: 1000px;
             width: 100%;
@@ -46,7 +46,6 @@
         .card-flip-inner {
             position: relative;
             width: 100%;
-            height: 100%;
             transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
         }
@@ -64,7 +63,7 @@
             transform-style: preserve-3d;
         }
         .card-front {
-            position: relative; /* Nagbibigay ng saktong sukat sa container base sa image aspect ratio */
+            position: relative;
             z-index: 2;
         }
         .card-back {
@@ -156,12 +155,12 @@
                     
                     <!-- FRONT SIDE -->
                     <div class="card-face card-front image-frame-3d rounded-2xl p-2">
-                        <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-contain rounded-xl shadow-inner block" onload="adjustCardHeight()">
+                        <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-fill rounded-xl shadow-inner block" onload="adjustCardHeight()">
                     </div>
 
                     <!-- BACK SIDE -->
                     <div class="card-face card-back image-frame-3d rounded-2xl p-2">
-                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-contain rounded-xl shadow-inner block">
+                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-full object-fill rounded-xl shadow-inner block">
                     </div>
 
                 </div>
@@ -250,7 +249,7 @@
                 cardImageUrl = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
                 document.getElementById('profileImg').src = cardImageUrl;
 
-                // Back Image URL (Awtomatikong kukuha sa raw github link kung walang nakalagay sa Sheet)
+                // Back Image URL (Eksaktong Raw GitHub Link)
                 const defaultBackImage = "https://raw.githubusercontent.com/imerchmedia-commits/digital-business-card-/main/back%20CC.jpg";
                 const backImageUrl = data.BackPhotoURL && data.BackPhotoURL.trim() !== "" ? data.BackPhotoURL : defaultBackImage;
                 document.getElementById('backProfileImg').src = backImageUrl;
@@ -267,7 +266,7 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('cardContent').classList.remove('hidden');
 
-                // Auto-adjust height container para eksaktong magpantay
+                // Auto-adjust height container
                 setTimeout(adjustCardHeight, 50);
 
             } catch (error) {
@@ -276,7 +275,7 @@
             }
         }
 
-        // Pantay na sukat ng front at back container para maganda ang 3D flip effect nang walang paggalaw ng pwesto
+        // Pantay na sukat ng front at back container para hindi mag-crash o ma-cut ang image
         function adjustCardHeight() {
             const frontImg = document.getElementById('profileImg');
             if (frontImg && frontImg.height > 0) {
