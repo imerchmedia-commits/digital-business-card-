@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Business Card - iMerch Media Inc.</title>
-    <!-- Tailwind CSS v3 Play CDN para stable at hindi masira ang design -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
@@ -15,6 +15,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
+            /* Dynamic Animated Premium Gradient Background */
             background: linear-gradient(135deg, #090d16 0%, #111827 50%, #1e1b4b 100%);
             background-size: 200% 200%;
             animation: bgShift 12s ease infinite;
@@ -37,40 +38,6 @@
                         inset 0 -1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        /* 3D Flip Card Container Styles */
-        .perspective-container {
-            perspective: 1000px;
-            width: 100%;
-            position: relative;
-        }
-        .card-flip-inner {
-            position: relative;
-            width: 100%;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-        }
-        .card-flipped {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            -webkit-transform-style: preserve-3d;
-            transform-style: preserve-3d;
-        }
-        .card-front {
-            position: relative;
-            z-index: 2;
-        }
-        .card-back {
-            transform: rotateY(180deg);
-            z-index: 1;
-        }
-
         /* 3D Embossed Button & Elements */
         .btn-3d {
             background: linear-gradient(145deg, #ffffff, #f1f5f9);
@@ -79,18 +46,21 @@
                         inset 0 1px 0 rgba(255, 255, 255, 1);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .btn-3d:hover {
             transform: translateY(-2px);
             box-shadow: 8px 8px 20px rgba(163, 177, 198, 0.5), 
                         -8px -8px 20px rgba(255, 255, 255, 1),
                         inset 0 1px 0 rgba(255, 255, 255, 1);
         }
+
         .btn-3d:active {
             transform: translateY(1px);
             box-shadow: inset 3px 3px 6px rgba(163, 177, 198, 0.3), 
                         inset -3px -3px 6px rgba(255, 255, 255, 0.8);
         }
 
+        /* Primary 3D Embossed Button (Indigo Theme) */
         .btn-3d-primary {
             background: linear-gradient(145deg, #6366f1, #4f46e5);
             color: white;
@@ -99,26 +69,25 @@
                         inset 0 -2px 4px rgba(0, 0, 0, 0.2);
             transition: all 0.2s ease;
         }
+
         .btn-3d-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 14px 30px -5px rgba(79, 70, 229, 0.6),
                         inset 0 1px 1px rgba(255, 255, 255, 0.5);
         }
+
         .btn-3d-primary:active {
             transform: translateY(1px);
             box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.3);
         }
 
+        /* 3D Embossed Image Frame */
         .image-frame-3d {
             background: #ffffff;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08),
                         inset 0 2px 4px rgba(255, 255, 255, 0.9),
                         inset 0 -2px 4px rgba(0, 0, 0, 0.05);
             border: 2px solid rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
         }
 
         /* Custom Scrollbar */
@@ -132,65 +101,54 @@
 
     <div class="glass-card w-full max-w-md rounded-3xl overflow-hidden p-6 sm:p-8 text-center my-auto transition-all duration-300">
         
-        <!-- Loading state -->
+        <!-- Loading state na may modern spinner -->
         <div id="loading" class="py-16">
             <div class="inline-block w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
             <p class="text-slate-600 font-medium animate-pulse">Inihahanda ang Digital Card...</p>
         </div>
 
-        <!-- Card Content -->
+        <!-- Card Content (Naka-hide muna habang kinukuha ang data) -->
         <div id="cardContent" class="hidden">
             
             <!-- Verified Badge / Header Accent -->
-            <div class="flex items-center justify-center mb-4">
-                <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/80 border border-white text-indigo-600 text-xs font-bold tracking-wider uppercase shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
-                    Official Digital Business Card
+            <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/80 border border-white text-indigo-600 text-xs font-bold mb-4 tracking-wider uppercase shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
+                Official Digital Business Card
+            </div>
+
+            <!-- Larawan / Business Card Image na may 3D Frame -->
+            <div class="mb-6 relative group">
+                <div class="image-frame-3d rounded-2xl p-2 transition duration-500 group-hover:scale-[1.01]">
+                    <img id="profileImg" src="" alt="Business Card" class="w-full h-auto object-cover rounded-xl shadow-inner">
                 </div>
             </div>
 
-            <!-- 3D Flip Card Frame -->
-            <div class="mb-6 perspective-container cursor-pointer group" onclick="toggleCardFlip()">
-                <div id="cardFlipInner" class="card-flip-inner">
-                    
-                    <!-- FRONT SIDE -->
-                    <div class="card-face card-front image-frame-3d rounded-2xl p-2">
-                        <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-fill rounded-xl shadow-inner block" onload="adjustCardHeight()">
-                    </div>
-
-                    <!-- BACK SIDE -->
-                    <div id="backFaceContainer" class="card-face card-back image-frame-3d rounded-2xl p-2 bg-white">
-                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-fill rounded-xl shadow-inner block" onerror="handleBackImageError()">
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Tap Hint -->
-            <p class="text-[11px] text-indigo-700 font-semibold mb-4 tracking-wide animate-pulse">👆 I-tap ang card para baligtarin</p>
-
-            <!-- Profile Info -->
+            <!-- Profile Info na may linis sa mata -->
             <h1 id="fullName" class="text-2xl font-bold text-slate-900 tracking-tight drop-shadow-sm"></h1>
             <p id="jobTitle" class="text-indigo-600 font-bold text-sm mt-1 uppercase tracking-wider"></p>
             <p id="company" class="text-slate-500 text-xs font-semibold mb-6 pb-4 border-b border-slate-200/60"></p>
 
             <!-- 3D Embossed Action Buttons -->
             <div class="space-y-3.5">
+                <!-- Button para i-save ang contact number sa phone -->
                 <button onclick="saveContact()" class="w-full btn-3d-primary font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2.5 text-sm cursor-pointer">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                     I-save sa Contacts
                 </button>
 
+                <!-- Button para i-download ang mismong Business Card image -->
                 <a id="downloadCardBtn" href="#" download class="w-full btn-3d text-slate-800 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2.5 text-sm">
                     <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     I-download ang Card Image
                 </a>
 
+                <!-- Button para sa Tawag -->
                 <a id="callBtn" href="#" class="w-full btn-3d text-emerald-800 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 text-sm">
                     <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                     Tawagan / Call
                 </a>
 
+                <!-- Button para sa Email -->
                 <a id="emailBtn" href="#" class="w-full btn-3d text-sky-800 font-bold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 text-sm">
                     <svg class="w-5 h-5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     Mag-email / Send Email
@@ -212,29 +170,10 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwS7L767N701bp9RW_iDRaGbHfHMnyjoRErabKuqTFSjLSHkeeg1JgaA82r0CBsslVv/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbz7_gnj4aFSb8DlyokdzVkXbzB4uVwKKJDLUj3Fqdk9hUog4XVBJrfIX7MuiiCtogGjIg/exec";
 
         let contactData = {};
         let cardImageUrl = "";
-
-        // Function para i-trigger ang 3D flip animation kapag tinap ang card
-        function toggleCardFlip() {
-            const innerCard = document.getElementById('cardFlipInner');
-            innerCard.classList.toggle('card-flipped');
-        }
-
-        // Fallback function kung sakaling mag-fail i-load ang back image mula sa GitHub
-        function handleBackImageError() {
-            const backContainer = document.getElementById('backFaceContainer');
-            backContainer.style.background = 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)';
-            backContainer.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full text-white p-6 text-center">
-                    <span class="text-[10px] tracking-widest text-indigo-300 uppercase font-bold mb-1">iMerch Media Inc.</span>
-                    <h3 class="text-base font-bold text-white mb-2">Official Business Card</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">I-save ang contact o i-tap ulit para bumalik sa front view.</p>
-                </div>
-            `;
-        }
 
         async function fetchCardData() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -261,16 +200,12 @@
                 document.getElementById('jobTitle').innerText = data.JobTitle;
                 document.getElementById('company').innerText = data.Company;
                 
-                // Front Image URL
+                // Set Image URL
                 cardImageUrl = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
-                document.getElementById('profileImg').src = cardImageUrl;
+                const imgElement = document.getElementById('profileImg');
+                imgElement.src = cardImageUrl;
 
-                // Back Image URL (Sinigurong malinis at may fallback)
-                const defaultBackImage = "https://raw.githubusercontent.com/imerchmedia-commits/digital-business-card-/main/back%20CC.jpg";
-                const backImageUrl = (data.BackPhotoURL && data.BackPhotoURL.trim() !== "") ? data.BackPhotoURL : defaultBackImage;
-                document.getElementById('backProfileImg').src = backImageUrl;
-
-                // Download link para sa front card image
+                // I-set ang download link para sa business card image button
                 const downloadCardBtn = document.getElementById('downloadCardBtn');
                 downloadCardBtn.href = cardImageUrl;
                 downloadCardBtn.setAttribute('download', `${data.FullName.replace(/\s+/g, '_')}_BusinessCard.jpg`);
@@ -282,25 +217,11 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('cardContent').classList.remove('hidden');
 
-                // Auto-adjust height container batay sa sukat ng front image
-                setTimeout(adjustCardHeight, 50);
-
             } catch (error) {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('errorState').classList.remove('hidden');
             }
         }
-
-        // Pantay na sukat ng front at back container para sabay silang mag-fit
-        function adjustCardHeight() {
-            const frontImg = document.getElementById('profileImg');
-            if (frontImg && frontImg.height > 0) {
-                const parent = document.getElementById('cardFlipInner');
-                parent.style.height = frontImg.height + 'px';
-            }
-        }
-
-        window.addEventListener('resize', adjustCardHeight);
 
         async function saveContact() {
             const vcard = [
