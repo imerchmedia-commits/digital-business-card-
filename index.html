@@ -158,13 +158,16 @@
                         <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-fill rounded-xl shadow-inner block" onload="adjustCardHeight()">
                     </div>
 
-                    <!-- BACK SIDE (May kasamang Fallback Error Handler) -->
-                    <div id="backFaceContainer" class="card-face card-back image-frame-3d rounded-2xl p-2">
-                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-full object-fill rounded-xl shadow-inner block" onerror="handleBackImageError()">
+                    <!-- BACK SIDE -->
+                    <div id="backFaceContainer" class="card-face card-back image-frame-3d rounded-2xl p-2 bg-white">
+                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-fill rounded-xl shadow-inner block" onerror="handleBackImageError()">
                     </div>
 
                 </div>
             </div>
+
+            <!-- Tap Hint -->
+            <p class="text-[11px] text-indigo-700 font-semibold mb-4 tracking-wide animate-pulse">👆 I-tap ang card para baligtarin</p>
 
             <!-- Profile Info -->
             <h1 id="fullName" class="text-2xl font-bold text-slate-900 tracking-tight drop-shadow-sm"></h1>
@@ -262,9 +265,9 @@
                 cardImageUrl = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
                 document.getElementById('profileImg').src = cardImageUrl;
 
-                // Back Image URL (Gagamitin ang galing sa database kung meron, o kaya ay default GitHub link)
+                // Back Image URL (Sinigurong malinis at may fallback)
                 const defaultBackImage = "https://raw.githubusercontent.com/imerchmedia-commits/digital-business-card-/main/back%20CC.jpg";
-                const backImageUrl = data.BackPhotoURL && data.BackPhotoURL.trim() !== "" ? data.BackPhotoURL : defaultBackImage;
+                const backImageUrl = (data.BackPhotoURL && data.BackPhotoURL.trim() !== "") ? data.BackPhotoURL : defaultBackImage;
                 document.getElementById('backProfileImg').src = backImageUrl;
 
                 // Download link para sa front card image
@@ -279,7 +282,7 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('cardContent').classList.remove('hidden');
 
-                // Auto-adjust height container
+                // Auto-adjust height container batay sa sukat ng front image
                 setTimeout(adjustCardHeight, 50);
 
             } catch (error) {
@@ -288,7 +291,7 @@
             }
         }
 
-        // Pantay na sukat ng front at back container para hindi mag-crash o ma-cut ang image
+        // Pantay na sukat ng front at back container para sabay silang mag-fit
         function adjustCardHeight() {
             const frontImg = document.getElementById('profileImg');
             if (frontImg && frontImg.height > 0) {
