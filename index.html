@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Business Card</title>
+    <!-- Tailwind CSS para sa mabilis at magandang styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 text-center">
+        <!-- Loading state -->
+        <div id="loading" class="py-10">
+            <p class="text-slate-500 animate-pulse">Naglo-load ang Business Card...</p>
+        </div>
+
+        <!-- Card Content (Naka-hide muna habang kinukuha ang data) -->
+        <div id="cardContent" class="hidden">
+            <!-- Larawan / Business Card Image -->
+            <div class="mb-4">
+                <img id="profileImg" src="" alt="Business Card" class="w-full h-auto rounded-xl shadow-md object-cover border border-slate-200">
+            </div>
+
+            <h1 id="fullName" class="text-2xl font-bold text-slate-800"></h1>
+            <p id="jobTitle" class="text-indigo-600 font-medium mb-1"></p>
+            <p id="company" class="text-slate-500 text-sm mb-6"></p>
+
+            <!-- Buttons -->
+            <div class="space-y-3">
+                <button onclick="saveContact()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2">
+                    📱 I-save sa Contacts
+                </button>
+                <a id="callBtn" href="#" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-2">
+                    📞 Tawagan / Call
+                </a>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="hidden py-10">
+            <p class="text-red-500 font-semibold">Hindi nahanap ang business card o may mali sa link.</p>
+        </div>
+    </div>
+
+    <script>
+        // Palitan ito ng Google Apps Script Web App URL mo mula sa unang hakbang
+        const API_URL = "DITO_ILAGAY_ANG_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+
+        let contactData = {};
+
+        async function fetchCardData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (!id) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}?id=${id}`);
+                const data = await response.json();
+
+                if (!data.FullName) {
+                    throw new Error("No data found");
+                }
+
+                contactData = data;
+
+                // Ipakita ang data sa UI
+                document.getElementById('fullName').innerText = data.FullName;
+                document.getElementById('jobTitle').innerText = data.JobTitle;
+                document.getElementById('company').innerText = data.Company;
+                
+                // Kung may PhotoURL column sa Sheet, unahin yun, kung wala, gagamit ng default
+                const imgElement = document.getElementById('profileImg');
+                imgElement.src = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
+
+                document.getElementById('callBtn').href = `tel:${data.Phone}`;
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('cardContent').classList.remove('hidden');
+
+                // Auto-trigger ang vCard download o prompt pagka-open para sa convenience ng client
+                // (O kaya i-click nila yung button para mas safe sa ilang mobile browsers)
+            } catch (error) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+            }
+        }
+
+        function saveContact() {
+            // Gumawa ng vCard (.vcf) format data string
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${contactData.FullName}
+TITLE:${contactData.JobTitle}
+ORG:${contactData.Company}
+TEL;TYPE=CELL:${contactData.Phone}
+EMAIL:${contactData.Email}
+URL:${contactData.Website || ''}
+END:VCARD`;
+
+            const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${contactData.FullName.replace(/\s+/g, '_')}.vcf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        fetchCardData();
+    </script>
+</body>
+</html>
