@@ -37,9 +37,10 @@
                         inset 0 -1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        /* 3D Flip Card Container Styles */
+        /* 3D Flip Card Container Styles - Naayos para magkapatong nang eksakto */
         .perspective-container {
             perspective: 1000px;
+            width: 100%;
         }
         .card-flip-inner {
             position: relative;
@@ -52,10 +53,17 @@
         }
         .card-face {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+        .card-front {
+            position: relative; /* Hinahayaan nitong sundin ang natural height ng image para sa container */
         }
         .card-back {
             transform: rotateY(180deg);
@@ -128,14 +136,11 @@
         <div id="cardContent" class="hidden">
             
             <!-- Verified Badge / Header Accent -->
-            <div class="flex items-center justify-between mb-4">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-white text-indigo-600 text-xs font-bold tracking-wider uppercase shadow-sm">
+            <div class="flex items-center justify-center mb-4">
+                <div class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/80 border border-white text-indigo-600 text-xs font-bold tracking-wider uppercase shadow-sm">
                     <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
                     Official Digital Business Card
                 </div>
-                <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100 shadow-sm animate-bounce">
-                    🔄 I-tap ang Card para I-flip
-                </span>
             </div>
 
             <!-- 3D Flip Card Frame -->
@@ -143,13 +148,13 @@
                 <div id="cardFlipInner" class="card-flip-inner">
                     
                     <!-- FRONT SIDE -->
-                    <div class="card-face image-frame-3d rounded-2xl p-2 relative">
-                        <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-cover rounded-xl shadow-inner">
+                    <div class="card-face card-front image-frame-3d rounded-2xl p-2">
+                        <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-cover rounded-xl shadow-inner block" onload="adjustCardHeight()">
                     </div>
 
                     <!-- BACK SIDE -->
-                    <div class="card-face card-back image-frame-3d rounded-2xl p-2 relative">
-                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-cover rounded-xl shadow-inner">
+                    <div class="card-face card-back image-frame-3d rounded-2xl p-2">
+                        <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-cover rounded-xl shadow-inner block">
                     </div>
 
                 </div>
@@ -238,8 +243,9 @@
                 cardImageUrl = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
                 document.getElementById('profileImg').src = cardImageUrl;
 
-                // Back Image URL (Kukuha sa BackPhotoURL column ng Google Sheet, may fallback kung wala pa)
-                const backImageUrl = data.BackPhotoURL || cardImageUrl;
+                // Back Image URL (Awtomatikong kukuha sa raw github link kung walang nakalagay sa Sheet)
+                const defaultBackImage = "https://raw.githubusercontent.com/imerchmedia-commits/digital-business-card-/main/back%20CC.jpg";
+                const backImageUrl = data.BackPhotoURL && data.BackPhotoURL.trim() !== "" ? data.BackPhotoURL : defaultBackImage;
                 document.getElementById('backProfileImg').src = backImageUrl;
 
                 // Download link para sa front card image
@@ -254,8 +260,8 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('cardContent').classList.remove('hidden');
 
-                // Auto-adjust height container para maiwasan ang clipping kapag umiikot
-                setTimeout(adjustCardHeight, 100);
+                // Auto-adjust height container para eksaktong magpantay
+                setTimeout(adjustCardHeight, 50);
 
             } catch (error) {
                 document.getElementById('loading').classList.add('hidden');
@@ -263,11 +269,10 @@
             }
         }
 
-        // Pantay na sukat ng front at back para maganda ang 3D flip effect
+        // Pantay na sukat ng front at back container para maganda ang 3D flip effect nang walang pagbaba ng pwesto
         function adjustCardHeight() {
             const frontImg = document.getElementById('profileImg');
-            const backImg = document.getElementById('backProfileImg');
-            if (frontImg.height > 0) {
+            if (frontImg && frontImg.height > 0) {
                 const parent = document.getElementById('cardFlipInner');
                 parent.style.height = frontImg.height + 'px';
             }
