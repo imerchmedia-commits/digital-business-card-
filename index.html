@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Business Card - iMerch Media Inc.</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Tailwind CSS v3 Play CDN para stable at hindi masira ang design -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
@@ -143,12 +143,12 @@
                 <div id="cardFlipInner" class="card-flip-inner">
                     
                     <!-- FRONT SIDE -->
-                    <div class="card-face image-frame-3d rounded-2xl p-2">
+                    <div class="card-face image-frame-3d rounded-2xl p-2 relative">
                         <img id="profileImg" src="" alt="Business Card Front" class="w-full h-auto object-cover rounded-xl shadow-inner">
                     </div>
 
                     <!-- BACK SIDE -->
-                    <div class="card-face card-back image-frame-3d rounded-2xl p-2">
+                    <div class="card-face card-back image-frame-3d rounded-2xl p-2 relative">
                         <img id="backProfileImg" src="" alt="Business Card Back" class="w-full h-auto object-cover rounded-xl shadow-inner">
                     </div>
 
@@ -238,7 +238,7 @@
                 cardImageUrl = data.PhotoURL || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60";
                 document.getElementById('profileImg').src = cardImageUrl;
 
-                // Back Image URL (Kukuha sa bagong BackPhotoURL column sa Google Sheet, may default fallback kung wala pa)
+                // Back Image URL (Kukuha sa BackPhotoURL column ng Google Sheet, may fallback kung wala pa)
                 const backImageUrl = data.BackPhotoURL || cardImageUrl;
                 document.getElementById('backProfileImg').src = backImageUrl;
 
@@ -254,11 +254,26 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('cardContent').classList.remove('hidden');
 
+                // Auto-adjust height container para maiwasan ang clipping kapag umiikot
+                setTimeout(adjustCardHeight, 100);
+
             } catch (error) {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('errorState').classList.remove('hidden');
             }
         }
+
+        // Pantay na sukat ng front at back para maganda ang 3D flip effect
+        function adjustCardHeight() {
+            const frontImg = document.getElementById('profileImg');
+            const backImg = document.getElementById('backProfileImg');
+            if (frontImg.height > 0) {
+                const parent = document.getElementById('cardFlipInner');
+                parent.style.height = frontImg.height + 'px';
+            }
+        }
+
+        window.addEventListener('resize', adjustCardHeight);
 
         async function saveContact() {
             const vcard = [
